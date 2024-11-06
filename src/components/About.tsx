@@ -8,7 +8,7 @@ function About() {
   const [text, setText] = useState("");
   const fullText = " I'M SEZGIN";
   const typingSpeed = 200;
-  const [paragraphWords, setParagraphWords] = useState<string[]>([]);
+  const [visibleText, setVisibleText] = useState("");
   const paragraphFullText =
     "I’m a self-taught full-stack developer passionate about creating user-friendly, impactful applications. I love understanding client needs and building solutions that are reliable and easy to maintain. I’m excited to bring my skills, curiosity, and adaptability to the next big opportunity and can’t wait to see where my journey in tech takes me next!";
 
@@ -28,18 +28,13 @@ function About() {
   }, []);
 
   useEffect(() => {
-    const words = paragraphFullText.split(" ");
-    let wordIndex = 0;
-    const wordInterval = setInterval(() => {
-      setParagraphWords((prev) => [...prev, words[wordIndex]]);
-      wordIndex += 1;
-      if (wordIndex === words.length) {
-        clearInterval(wordInterval);
-      }
-    }, wordDelay);
-
-    return () => clearInterval(wordInterval);
-  }, []);
+    if (visibleText.length < paragraphFullText.length) {
+      const timeoutId = setTimeout(() => {
+        setVisibleText(paragraphFullText.slice(0, visibleText.length + 10));
+      }, 100); // Faster typing speed for paragraph
+      return () => clearTimeout(timeoutId);
+    }
+  }, [visibleText]);
   return (
     <div className="about">
       <div className="welcome-container">
@@ -48,13 +43,7 @@ function About() {
           {text}
           <span className="cursor">|</span>
         </div>
-        <p className="animated-paragraph">
-          {paragraphWords.map((word, index) => (
-            <span key={index} className="fade-in">
-              {word}{" "}
-            </span>
-          ))}
-        </p>
+        <p className="animated-paragraph fade-in">{visibleText}</p>
         <a href="/SEZ_CV.pdf" download="SEZ_CV.pdf">
           <button>
             <BsFillCloudDownloadFill /> Download CV
